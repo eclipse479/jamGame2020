@@ -52,7 +52,12 @@ public class PlayerControls : MonoBehaviour
     public Sprite burstGun;
 
     public bulletType currentBullet;
-    // Start is called before the first frame update
+
+    public AudioClip bulletShot;
+    public AudioClip powerUpSound;
+
+    private AudioSource audio;
+
     void Start()
     {
         currentAmmo = maxAmmo;
@@ -62,6 +67,8 @@ public class PlayerControls : MonoBehaviour
         reloadTimer = reloadSpeed;
         shootDirection = startLook;
         shootDirection.Normalize();
+
+        audio = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -134,6 +141,7 @@ public class PlayerControls : MonoBehaviour
                     BulletController bulletSpawn = Instantiate(projectile, spawner.transform.position, Quaternion.identity).GetComponent<BulletController>();
                     bulletSpawn.startDirection = shootDirection;
                     Physics.IgnoreCollision(bulletSpawn.GetComponent<Collider>(), gameObject.GetComponent<Collider>());
+                    audio.PlayOneShot(bulletShot);
                     break;
                 }
             case bulletType.bouncy:
@@ -143,6 +151,7 @@ public class PlayerControls : MonoBehaviour
                     bulletSpawn.startDirection = shootDirection;
                     bulletSpawn.bouncy = true;
                     Physics.IgnoreCollision(bulletSpawn.GetComponent<Collider>(), gameObject.GetComponent<Collider>());
+                    audio.PlayOneShot(bulletShot);
                     break;
                 }
             case bulletType.explosive:
@@ -153,6 +162,7 @@ public class PlayerControls : MonoBehaviour
                     bulletSpawn.explosive = true;
                     bulletSpawn.startDirection = shootDirection;
                     Physics.IgnoreCollision(bulletSpawn.GetComponent<Collider>(), gameObject.GetComponent<Collider>());
+                    audio.PlayOneShot(bulletShot);
                     break;
                 }
             case bulletType.fast:
@@ -162,6 +172,7 @@ public class PlayerControls : MonoBehaviour
                     bulletSpawn.fast = true;
                     bulletSpawn.startDirection = shootDirection;
                     Physics.IgnoreCollision(bulletSpawn.GetComponent<Collider>(), gameObject.GetComponent<Collider>());
+                    audio.PlayOneShot(bulletShot);
                     break;
                 }
             case bulletType.spread:
@@ -184,6 +195,7 @@ public class PlayerControls : MonoBehaviour
                     bulletSpawn3.startDirection = shootDirection;
                     Physics.IgnoreCollision(bulletSpawn3.GetComponent<Collider>(), gameObject.GetComponent<Collider>());
                     shootDirection = Quaternion.AngleAxis(20, Vector3.up) * shootDirection;
+                    audio.PlayOneShot(bulletShot);
                     break;
                 }
             case bulletType.burst:
@@ -212,6 +224,7 @@ public class PlayerControls : MonoBehaviour
     {
         if (collision.gameObject.tag == "powerUp")
         {
+            audio.PlayOneShot(powerUpSound);
             powerUp newpower = collision.gameObject.GetComponent<powerUp>();
             currentBullet = (bulletType)newpower.currentPower;
             hasReloaded = true;
@@ -279,6 +292,7 @@ public class PlayerControls : MonoBehaviour
             bulletSpawn.bursting = true;
             bulletSpawn.startDirection = shootDirection;
             Physics.IgnoreCollision(bulletSpawn.GetComponent<Collider>(), gameObject.GetComponent<Collider>());
+            audio.PlayOneShot(bulletShot);
             yield return new WaitForSeconds(burstTimer);
         }
     }

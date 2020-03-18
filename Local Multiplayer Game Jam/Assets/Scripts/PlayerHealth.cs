@@ -9,8 +9,14 @@ public class PlayerHealth : MonoBehaviour
     public Image heartIndicator;
     private int damageAmount;
     public GameObject deathParticle;
+    public AudioClip deathSound;
 
-    // Start is called before the first frame update
+    private AudioSource audio;
+
+    private void Awake()
+    {
+        audio = GetComponent<AudioSource>();
+    }
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -42,6 +48,7 @@ public class PlayerHealth : MonoBehaviour
       
         if (currentLifeHealth <= 0)
         {
+            audio.PlayOneShot(deathSound);
             Instantiate(deathParticle,transform.position, Quaternion.identity);
             this.gameObject.SetActive(false);
             this.GetComponent<PlayerControls>().ammoTracker.gameObject.SetActive(false);
