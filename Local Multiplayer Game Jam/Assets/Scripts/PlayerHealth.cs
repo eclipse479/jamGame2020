@@ -40,9 +40,9 @@ public class PlayerHealth : MonoBehaviour
 
         heartIndicator.fillAmount = currentLifeHealth / 100;
       
-        if (currentLifeHealth == 0)
+        if (currentLifeHealth <= 0)
         {
-            GameObject.Instantiate(deathParticle.gameObject, this.gameObject.transform);
+            Instantiate(deathParticle,transform.position, Quaternion.identity);
             this.gameObject.SetActive(false);
             this.GetComponent<PlayerControls>().ammoTracker.gameObject.SetActive(false);
         }

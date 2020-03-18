@@ -26,6 +26,7 @@ public class PlayerControls : MonoBehaviour
     public Image ammoTracker;
     public float maxAmmo = 10;
     private float currentAmmo;
+    
     public enum bulletType
     {
         normal,
@@ -38,8 +39,10 @@ public class PlayerControls : MonoBehaviour
 
     public float reloadSpeed;
     private float reloadTimer;
-    private bool hasReloaded = false;
+    private bool hasReloaded = true;
 
+    private float reloadCounter = 0;
+    private float maxRedloadCounter = 100;
     public Image gunType;
     public Sprite normalGun;
     public Sprite bounceGun;
@@ -56,7 +59,6 @@ public class PlayerControls : MonoBehaviour
         body = gameObject.GetComponent<Rigidbody>();
         shootingTimer = maxShootingTimer;
         currentBullet = bulletType.normal;
-        currentAmmo = maxAmmo;
         reloadTimer = reloadSpeed;
         shootDirection = startLook;
         shootDirection.Normalize();
@@ -113,8 +115,9 @@ public class PlayerControls : MonoBehaviour
         if (reloadTimer <= reloadSpeed)
         {
             reloadTimer += Time.deltaTime;
+            ammoTracker.fillAmount = reloadTimer / reloadSpeed;
         }
-        if (reloadTimer >= reloadSpeed && hasReloaded == false)
+        else if (reloadTimer >= reloadSpeed && hasReloaded == false)
         {
             reload();
         }
@@ -123,7 +126,6 @@ public class PlayerControls : MonoBehaviour
 
     void shootProjectile()
     {
-        currentAmmo--;
         switch (currentBullet)
         {
             case bulletType.normal:
@@ -190,8 +192,9 @@ public class PlayerControls : MonoBehaviour
                     break;
                 }
         }
-        shootingTimer = 0;
 
+        shootingTimer = 0;
+        Debug.Log(currentAmmo);
         currentAmmo--;
         ammoTracker.fillAmount = currentAmmo / maxAmmo;
 
@@ -201,9 +204,6 @@ public class PlayerControls : MonoBehaviour
             gunType.sprite = normalGun;
             reloadTimer = 0;
             hasReloaded = false;
-           
-
-
         }
 
     }
@@ -220,58 +220,50 @@ public class PlayerControls : MonoBehaviour
             {
                 case bulletType.normal:
                     {
-                        currentAmmo = 10;
                         maxAmmo = 10;
+                        currentAmmo = 10;
                         gunType.sprite = normalGun;
                         ammoTracker.fillAmount = maxAmmo / maxAmmo;
-
                         break;
                     }
                 case bulletType.bouncy:
                     {
-                        currentAmmo  = 10;
                         maxAmmo = 10;
+                        currentAmmo = 10;
                         gunType.sprite = bounceGun;
                         ammoTracker.fillAmount = maxAmmo / maxAmmo;
-
                         break;
                     }
                 case bulletType.explosive:
                     {
-                        currentAmmo   = 4;
                         maxAmmo = 4;
+                        currentAmmo = 4;
                         gunType.sprite = explosiveGun;
                         ammoTracker.fillAmount = maxAmmo / maxAmmo;
-
-
                         break;
                     }
                 case bulletType.fast:
                     {
-                        currentAmmo  = 7;
                         maxAmmo = 7;
+                        currentAmmo = 7;
                         gunType.sprite = fastGun;
                         ammoTracker.fillAmount = maxAmmo / maxAmmo;
-
                         break;
                     }
                 case bulletType.spread:
                     {
-                        currentAmmo   = 10;
                         maxAmmo = 10;
+                        currentAmmo = 10;
                         gunType.sprite = spreadGun;
                         ammoTracker.fillAmount = maxAmmo / maxAmmo;
-
-
                         break;
                     }
                 case bulletType.burst:
                     {
-                        currentAmmo  = 5;
                         maxAmmo = 5;
+                        currentAmmo = 5;
                         gunType.sprite = burstGun;
                         ammoTracker.fillAmount = maxAmmo / maxAmmo;
-
                         break;
                     }
             }
@@ -293,9 +285,11 @@ public class PlayerControls : MonoBehaviour
 
     void MoveAmmo()
     {
+        //moves the ammo ring above the player
         Vector3 namePos = Camera.main.WorldToScreenPoint(this.transform.position);
         ammoTracker.transform.position = namePos;
     }
+
     void reload()
     {
         hasReloaded = true;
